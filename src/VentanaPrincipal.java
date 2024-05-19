@@ -13,6 +13,8 @@ class Interfaz extends JFrame implements KeyListener {
 	GridBagConstraints gbc = new GridBagConstraints();
 	Calculadora cal = new Calculadora();
 	boolean verP = true;
+	String opr = "";
+	double m1,m2 = 0;
 	
 	JTextField txtIngresoNumeros;
 
@@ -53,15 +55,51 @@ class Interfaz extends JFrame implements KeyListener {
 		// %
 		JButton btnResiduo = new JButton("%");
 		agregarComponente(btnResiduo, 0, 3, 1, 1);
+		btnResiduo.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				opr = "%";
+				m1 = Double.parseDouble(txtIngresoNumeros.getText());
+				txtIngresoNumeros.setText("0");
+			}
+		});
+
+
 		// Raiz
 		JButton btnRaiz = new JButton("√");
 		agregarComponente(btnRaiz, 1, 3, 1, 1);
+		btnRaiz.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				double raiz = cal.raiz(Double.parseDouble(txtIngresoNumeros.getText()));
+				txtIngresoNumeros.setText(String.valueOf(raiz));
+				verP = false;
+			}
+		});
+
 		// Potencia cuadrada
 		JButton btnPotencia = new JButton("x^2");
 		agregarComponente(btnPotencia, 2, 3, 1, 1);
+		btnPotencia.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				double pot = cal.potenciaCuadrada(Double.parseDouble(txtIngresoNumeros.getText()));
+				txtIngresoNumeros.setText(String.valueOf(pot));
+				verP = false;
+			}
+		});
+
 		// Division a 1
 		JButton btnDivision1 = new JButton("1/x");
 		agregarComponente(btnDivision1, 3, 3, 1, 1);
+		btnDivision1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				double divUn = cal.division1(Double.parseDouble(txtIngresoNumeros.getText()));
+				txtIngresoNumeros.setText(String.valueOf(divUn));
+				verP = false;
+			}
+		});
 
 		// 4TA FILA
 		// CE
@@ -71,11 +109,20 @@ class Interfaz extends JFrame implements KeyListener {
 		JButton btnC = new JButton("C");
 		agregarComponente(btnC, 1, 4, 1, 1);
 		// ELIMINAR
-		JButton btnEliminar = new JButton("E");
+		JButton btnEliminar = new JButton("⌫");
 		agregarComponente(btnEliminar, 2, 4, 1, 1);
 		// Division
 		JButton btnDivision = new JButton("÷");
 		agregarComponente(btnDivision, 3, 4, 1, 1);
+		btnDivision.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				opr = "/";
+				m1 = Double.parseDouble(txtIngresoNumeros.getText());
+				txtIngresoNumeros.setText("0");
+				verP = true;
+			}
+		});
 
 		// 5TA FILA
 		// 7
@@ -125,6 +172,15 @@ class Interfaz extends JFrame implements KeyListener {
 		// Multiplicacion
 		JButton btnMultiplicacion = new JButton("×");
 		agregarComponente(btnMultiplicacion, 3, 5, 1, 1);
+		btnMultiplicacion.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				opr = "×";
+				m1 = Double.parseDouble(txtIngresoNumeros.getText());
+				txtIngresoNumeros.setText("0");
+				verP = true;
+			}
+		});
 
 		// 6TA FILA
 		// 4
@@ -174,6 +230,15 @@ class Interfaz extends JFrame implements KeyListener {
 		// Resta
 		JButton btnResta = new JButton("-");
 		agregarComponente(btnResta, 3, 6, 1, 1);
+		btnResta.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				opr = "-";
+				m1 = Double.parseDouble(txtIngresoNumeros.getText());
+				txtIngresoNumeros.setText("0");
+				verP = true;
+			}
+		});
 
 		// 7MA FILA
 		// 1
@@ -223,6 +288,15 @@ class Interfaz extends JFrame implements KeyListener {
 		// Suma
 		JButton btnSuma = new JButton("+");
 		agregarComponente(btnSuma, 3, 7, 1, 1);
+		btnSuma.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				opr = "+";
+				m1 = Double.parseDouble(txtIngresoNumeros.getText());
+				txtIngresoNumeros.setText("0");
+				verP = true;
+			}
+		});
 
 		// 8VA FILA
 		// +-
@@ -275,9 +349,41 @@ class Interfaz extends JFrame implements KeyListener {
 			}
 		});
 		agregarComponente(btnDecimal, 2, 8, 1, 1);
+
 		// Resultado
 		JButton btnResultado = new JButton("=");
 		agregarComponente(btnResultado, 3, 8, 1, 1);
+		btnResultado.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!txtIngresoNumeros.getText().isBlank()){
+					m2 = Double.parseDouble(txtIngresoNumeros.getText());
+				}
+				if (opr.equals("%")){
+					double residuo = cal.residuo(m1,m2);
+					txtIngresoNumeros.setText(String.valueOf(residuo));
+					verP = false;
+				}else if(opr.equals("×")){
+					double mult = cal.multiplicacion(m1,m2);
+					txtIngresoNumeros.setText(String.valueOf(mult));
+					verP = false;
+				}else if(opr.equals("/")) {
+					double division = cal.division(m1, m2);
+					txtIngresoNumeros.setText(String.valueOf(division));
+					verP = false;
+				}else if(opr.equals("+")) {
+					double sumaR = cal.suma(m1, m2);
+					txtIngresoNumeros.setText(String.valueOf(sumaR));
+					verP = false;
+				}else if(opr.equals("-")) {
+					double restaR = cal.resta(m1, m2);
+					txtIngresoNumeros.setText(String.valueOf(restaR));
+					verP = false;
+				}else {
+					txtIngresoNumeros.setText("0");
+				}
+			}
+		});
 
 		pack();
 		setLocationRelativeTo(null);
