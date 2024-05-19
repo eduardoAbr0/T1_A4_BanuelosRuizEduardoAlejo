@@ -12,6 +12,7 @@ class Interfaz extends JFrame implements KeyListener {
 	GridBagLayout gbl = new GridBagLayout();
 	GridBagConstraints gbc = new GridBagConstraints();
 	Calculadora cal = new Calculadora();
+	boolean verP = true;
 	
 	JTextField txtIngresoNumeros;
 
@@ -26,6 +27,7 @@ class Interfaz extends JFrame implements KeyListener {
 
 		// ESPACIO PARA INGRESO NUMEROS
 		txtIngresoNumeros = new JTextField();
+		txtIngresoNumeros.setHorizontalAlignment(SwingConstants.RIGHT);
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		agregarComponente(txtIngresoNumeros, 0, 0, 4, 1);
 
@@ -45,11 +47,7 @@ class Interfaz extends JFrame implements KeyListener {
 		// MS
 		JButton btnMS = new JButton("MS");
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		agregarComponente(btnMS, 0, 2, 2, 1);
-		// M↓
-		JButton btnMSave = new JButton("M↓");
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		agregarComponente(btnMSave, 2, 2, 2, 1);
+		agregarComponente(btnMS, 0, 2, 4, 1);
 
 		// 3RA FILA
 		// %
@@ -262,11 +260,17 @@ class Interfaz extends JFrame implements KeyListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (txtIngresoNumeros.getText().equals("")) {
-					txtIngresoNumeros.setText("0.");
-				} else {
-					txtIngresoNumeros.setText(txtIngresoNumeros.getText() + ".");
+				if(verP){
+					if (txtIngresoNumeros.getText().equals("")) {
+						txtIngresoNumeros.setText("0.");
+					} else {
+						txtIngresoNumeros.setText(txtIngresoNumeros.getText() + ".");
+					}
+
+					verP = false;
 				}
+
+
 
 			}
 		});
@@ -292,8 +296,7 @@ class Interfaz extends JFrame implements KeyListener {
 	@Override
 	public void keyTyped(KeyEvent e) {
 		char caracter = e.getKeyChar();
-		
-		
+
 		System.out.println(caracter);
 		for (int i = 0; i < txtIngresoNumeros.getText().length(); i++) {
 			if (txtIngresoNumeros.getText().charAt(i)=='.') {
