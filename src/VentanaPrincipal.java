@@ -1,5 +1,4 @@
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -8,13 +7,15 @@ import java.beans.PropertyChangeListener;
 
 import javax.swing.*;
 
-class Interfaz extends JFrame implements KeyListener {
+class Interfaz extends JFrame {
 	GridBagLayout gbl = new GridBagLayout();
 	GridBagConstraints gbc = new GridBagConstraints();
 	Calculadora cal = new Calculadora();
 	boolean verP = true;
 	String opr = "";
-	double m1,m2 = 0;
+	double m1,m2,ms = 0;
+	JButton btnMR,btnMC;
+
 	
 	JTextField txtIngresoNumeros;
 
@@ -23,33 +24,81 @@ class Interfaz extends JFrame implements KeyListener {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setTitle("Calculadora");
 		setVisible(true);
+		Font numFont = new Font("Monospaced", Font.PLAIN, 24);
 
 		gbc.ipadx = 50;
 		gbc.ipady = 50;
 
 		// ESPACIO PARA INGRESO NUMEROS
 		txtIngresoNumeros = new JTextField();
+		txtIngresoNumeros.setFont(numFont);
 		txtIngresoNumeros.setHorizontalAlignment(SwingConstants.RIGHT);
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		agregarComponente(txtIngresoNumeros, 0, 0, 4, 1);
-
+		txtIngresoNumeros.setText("0");
 		// 2DA FILA
 		// MC
-		JButton btnMC = new JButton("MC");
+		btnMC = new JButton("MC");
+		btnMC.setEnabled(false);
 		agregarComponente(btnMC, 0, 1, 1, 1);
+		btnMC.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (ms!=0){
+					ms=0;
+					btnMC.setEnabled(false);
+					btnMR.setEnabled(false);
+				}
+			}
+		});
+
 		// MR
-		JButton btnMR = new JButton("MR");
+		btnMR = new JButton("MR");
+		btnMR.setEnabled(false);
 		agregarComponente(btnMR, 1, 1, 1, 1);
+		btnMR.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (ms!=0){
+					txtIngresoNumeros.setText(String.valueOf(ms));
+				}
+			}
+		});
+
 		// M+
 		JButton btnMPlus = new JButton("M+");
 		agregarComponente(btnMPlus, 2, 1, 1, 1);
+		btnMPlus.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ms+=Double.parseDouble(txtIngresoNumeros.getText());
+			}
+		});
+
 		// M-
 		JButton btnMmin = new JButton("M-");
 		agregarComponente(btnMmin, 3, 1, 1, 1);
+		btnMmin.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ms-=Double.parseDouble(txtIngresoNumeros.getText());
+			}
+		});
+
 		// MS
 		JButton btnMS = new JButton("MS");
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		agregarComponente(btnMS, 0, 2, 4, 1);
+		btnMS.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!txtIngresoNumeros.getText().isEmpty()){
+					ms = Double.parseDouble(txtIngresoNumeros.getText());
+					btnMC.setEnabled(true);
+					btnMR.setEnabled(true);
+				}
+			}
+		});
 
 		// 3RA FILA
 		// %
@@ -105,12 +154,48 @@ class Interfaz extends JFrame implements KeyListener {
 		// CE
 		JButton btnCE = new JButton("CE");
 		agregarComponente(btnCE, 0, 4, 1, 1);
+		btnCE.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				txtIngresoNumeros.setText("0");
+				m1 = 0;
+				opr="";
+			}
+		});
+
 		// C
 		JButton btnC = new JButton("C");
 		agregarComponente(btnC, 1, 4, 1, 1);
+		btnC.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				txtIngresoNumeros.setText("0");
+			}
+		});
+
 		// ELIMINAR
 		JButton btnEliminar = new JButton("⌫");
 		agregarComponente(btnEliminar, 2, 4, 1, 1);
+		btnEliminar.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (txtIngresoNumeros.getText().length() > 1){
+					if (txtIngresoNumeros.getText().charAt(txtIngresoNumeros.getText().length()-1) == '.'){
+						verP = true;
+					}
+					String txt = txtIngresoNumeros.getText().substring(0, txtIngresoNumeros.getText().length() - 1);
+					txtIngresoNumeros.setText(txt);
+				}else if(txtIngresoNumeros.getText().length() == 1){
+					if (txtIngresoNumeros.getText().charAt(txtIngresoNumeros.getText().length()-1) == '.'){
+						verP = true;
+					}
+					txtIngresoNumeros.setText("0");
+				}else {
+					txtIngresoNumeros.setText("0");
+				}
+			}
+		});
+
 		// Division
 		JButton btnDivision = new JButton("÷");
 		agregarComponente(btnDivision, 3, 4, 1, 1);
@@ -306,8 +391,10 @@ class Interfaz extends JFrame implements KeyListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (txtIngresoNumeros.getText().equals("0")) {
+
 				} else if (txtIngresoNumeros.getText().equals("")) {
-				} else {
+					txtIngresoNumeros.setText("0");
+				}else {
 					txtIngresoNumeros.setText(String.valueOf(cal.negativoPos(Double.parseDouble(txtIngresoNumeros.getText()))));
 				}
 
@@ -358,6 +445,8 @@ class Interfaz extends JFrame implements KeyListener {
 			public void actionPerformed(ActionEvent e) {
 				if (!txtIngresoNumeros.getText().isBlank()){
 					m2 = Double.parseDouble(txtIngresoNumeros.getText());
+				}else {
+					m2 = 0;
 				}
 				if (opr.equals("%")){
 					double residuo = cal.residuo(m1,m2);
@@ -399,29 +488,6 @@ class Interfaz extends JFrame implements KeyListener {
 		add(c);
 	}
 
-	@Override
-	public void keyTyped(KeyEvent e) {
-		char caracter = e.getKeyChar();
-
-		System.out.println(caracter);
-		for (int i = 0; i < txtIngresoNumeros.getText().length(); i++) {
-			if (txtIngresoNumeros.getText().charAt(i)=='.') {
-				e.consume();
-				break;
-			}
-		}
-	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-
-	}
 }
 
 public class VentanaPrincipal {
